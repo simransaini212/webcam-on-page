@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <title>Image Capture</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Capture image with Webcam.</h2>
+        <button class="cameraOn">Turn On Camera</button>
+        <button class="imgBtn">Capture</button>
+        <div class="camera" style="width: 460px;height: 460px;">
+            <video id="video" style="width: 450px; height: 450px;" autoplay></video>
+        </div>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <img id="photo" alt="Captured Image" style="width: 450px; height: 450px;" />
+    </div>
+    <script>
+        $(document).ready(function () {
+            const width = 460;
+            let height = 0;
+            $('.cameraOn').click(function () {
+                let video = document.getElementById('video');
+                navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => {
+                    video.srcObject = stream;
+                    video.play();
+                })
+
+                    .catch((err) => {
+                        alert(err);
+                    });
+            });
+
+            $('.imgBtn').click(function (event) {
+                event.preventDefault();
+                let video = document.getElementById('video');
+                let canvas =document.getElementById('canvas');
+                let context = canvas.getContext("2d");
+                if (!height) {
+                    height = video.videoHeight / (video.videoWidth / width);
+                }
+                canvas.width = width;
+                canvas.height = height;
+                context.drawImage(video, 0, 0, width, height);
+                const data = canvas.toDataURL('image/png');
+                document.getElementById('photo').setAttribute('src', data);
+
+            });
+        });
+
+    </script>
+</body>
+
+</html>
